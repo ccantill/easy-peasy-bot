@@ -89,6 +89,33 @@ controller.hears('hello', 'direct_message', function (bot, message) {
     bot.reply(message, 'Hello!');
 });
 
+var users = [];
+controller.hears('play', 'direct_mention', function(bot, message) {
+
+    if (users.includes(message.user)) {
+        bot.reply(message, "Yeah ! I heared ya !");
+        return true;
+    }
+    users.push(message.user);
+
+    if (users.length >= 4) {
+        bot.reply(message, "Let's begin !!");
+        return true;
+    }
+
+    console.log(users);
+    bot.reply(message, "Added <@"+message.user+"> to the party ! Still " + (4 - users.length) + " to go !");
+});
+
+controller.hears('remove', 'direct_mention', function(bot, message) {
+    var userIndex = users.indexOf(message.user);
+    if (userIndex < 0) {
+        bot.reply(message, "Uh, I didn't even know you were playing, but .. yeah, I 'removed' you :face_with_rolling_eyes:.")
+        return true;
+    } 
+    users.splice(userIndex, 1);
+    bot.reply(message, "Removed <@"+message.user+"> :( Still " + (4 - users.length) + " to go !");
+});
 
 /**
  * AN example of what could be:
